@@ -78,3 +78,34 @@
 - Cmd + A , Shift +Option + F for code formatting
 
 
+# About Chrome browser ::
+- After chrome v115 we don't need to add anything in services, if you need to test something in lower or higher chrome version
+  specifically than provide it in wdio.conf.ts file under capabilities array i.e ,
+
+  capabilities: [{
+        browserName: 'chrome',
+        browserVersion: '122.0.6261.39'
+    }],
+
+ - If do't provide it tahn it will pick the latest binary file and download it and launch the chrome here i am providing it      because  v121 is having an issue to download it.
+
+ # About setting up npm project :: 
+ - you can run npm install to update the packages.
+ - if in case you find some issue open package.json file and hover it on key's i.e, So here you can update it by giving cmd 
+    npm -i @types/chai@latest @wdio/cli@latest @wdio/local-runner@latest in that way for all dependencies.
+ - On hovering keys it will automatically tell you the which updated version is going on.
+ - Before installing delete packages using rm -rf package-lock.json node_modules once delete it than download latest package so  that the vulnerabilities chances are less to occur.
+ - if it occur run npm audit fix to fix it but save your data in branch first.
+ - npm audit will check the status of vulnerability on the version which you have installed. 
+
+ "devDependencies": {
+    "@types/chai": "^4.3.11",
+    "@wdio/allure-reporter": "^8.31.1",
+    "@wdio/cli": "^8.32.0",
+    "@wdio/cucumber-framework": "^8.31.1",
+    "@wdio/local-runner": "^8.32.0",
+    "@wdio/spec-reporter": "^8.31.1",
+    "chai": "^5.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
