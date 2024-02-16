@@ -258,25 +258,85 @@ Then(/^get single cell value$/, async () => {
 });
 
 Then(/^get the single cell value based on another cell$/, async function () {
-
   // Now filer the data due more than > $ 50
-  let colDetails = await $$(`//table[@id="table1"]/thead/tr/th`);
+  //let colDetails = await $$(`//table[@id="table1"]/thead/tr/th`);
 
   let rowCount = await $$(`//table[@id="table1"]/tbody/tr`);
 
-  let arr = []
+  let arr = [];
 
-  for(let i=0; i< rowCount.length; i++){
+  for (let i = 0; i < rowCount.length; i++) {
+    let price = await $(
+      `//table[@id="table1"]/tbody/tr[${i + 1}]/td[4]`
+    ).getText();
+    let firstName = await $(
+      `//table[@id="table1"]/tbody/tr[${i + 1}]/td[2]`
+    ).getText();
 
-        let price =  await $(`//table[@id="table1"]/tbody/tr[${i + 1}]/td[4]`).getText();
-        let firstName =  await $(`//table[@id="table1"]/tbody/tr[${i + 1}]/td[2]`).getText();
-        
-         // price > 50 
-         if(+((price).replace("$", "")) > 50){
-            arr.push(firstName); 
-         }
+    // price > 50
+    if (+price.replace("$", "") > 50) {
+      arr.push(firstName);
+    }
   }
-       // Need to use filter as above 
-     console.log(`Single Col Name >>>   ${arr}`);
+  // Need to use filter as above for practise furthur // --> o/p :: Single Col Name >>>   Frank,Jason
+  console.log(`Single Col Name >>>   ${arr}`);
+});
 
+Then(/^learn on how to do Advance scrolling$/, async () => {
+  /**
+   * SCROLLING ::
+   *
+   * VISIBLE PORTION ::
+   * windows object ::
+   * 1. scrollBy
+   * Y-> [-]window.innerheight
+   *
+   *   */
+
+  /**
+   * * INVISIBLE PORTION ::
+   * windows object ::
+   * 1. scrollBy
+   * Y-> document.body.scrollTop[scrollHeight]
+   * >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   *  Search WebApi in google --> Search Window Object open it -> scroll present -> All method scroll present
+   *  https://developer.mozilla.org/en-US/docs/Web/API/Window/scroll
+   *  We can enject the JS code also they are async method code using browser.execute() function same as in JS executer in selenium.
+   *
+   * >> Press cmd + shift + 4 on mac to see the x & y coordinates top x and down y
+   * 0 -> x horizontal
+   * y -> vertical
+   * > On going Top to Bottom changing the y coordinates not x coordinates
+   *  */
+
+  await browser.navigateTo("https://www.amazon.com/");
+  await browser.pause(3000);
+
+  // scroll Down
+  await browser.execute(() => {
+    window.scrollBy(0, window.innerHeight);
+  });
+
+  await browser.pause(4000);
+
+  // scroll up, () accept another function as an argument
+  await browser.execute(() => {
+    window.scrollBy(0, -window.innerHeight);
+  });
+
+  await browser.pause(4000);
+
+  // For Invisible Portion
+  // Scroll Down
+  await browser.execute(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+
+  await browser.pause(4000);
+
+  await browser.execute(() => {
+    window.scrollTo(0, document.body.scrollTop);
+  });
+
+  await browser.pause(4000);
 });

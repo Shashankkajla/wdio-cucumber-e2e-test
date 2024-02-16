@@ -14,10 +14,17 @@ Feature: Advance Web Interaction Session.
         #Then Inventory page should list <NumberOfProducts>
         #Then Validate all product have valid price
         # 2. Handling WebTable 
-        Then Handle the WebTable as per given mentioned scenarios
-        Then get Single row based data as third condition
-        Then get single cell value 
-        Then get the single cell value based on another cell
+        #Then Handle the WebTable as per given mentioned scenarios
+        #Then get Single row based data as third condition
+        #Then get single cell value 
+        #Then get the single cell value based on another cell
+        # 3. Advance Scrolling :: New Website independent Test Step
+        #Then learn on how to do Advance scrolling
+        # 4. Weights & TimeOuts
+        When weight and timeout in whenTs section
+        When use wait until dynamic waits
+        # 5. Backward Forward Navigations Browser
+        When Navigation test
 
 
         Examples:

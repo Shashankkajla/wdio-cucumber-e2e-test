@@ -70,7 +70,6 @@
 - import all exports from the "chai" module and assign them to a single variable (chai in this case).
 
 
-
 # Short Cuts ::
 - Ctrl + BackTick : directly Open Terminal
 - Cmd + Shift + P : Suggestions
@@ -87,7 +86,9 @@
         browserVersion: '122.0.6261.39'
     }],
 
+ - https://googlechromelabs.github.io/chrome-for-testing/#stable -> To check stable version of chrome 
  - If do't provide it tahn it will pick the latest binary file and download it and launch the chrome here i am providing it      because  v121 is having an issue to download it.
+
 
  # About setting up npm project :: 
  - you can run npm install to update the packages.
@@ -109,3 +110,103 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
+
+
+  # TimeOuts ::
+  - Go to wdio.ts here you search timeout the default timeout is present for 10sec furthur go to wdio on website-> guide
+    under guide you can see the timeouts at project level i.e ,
+    // Default timeout for all waitFor* commands. --> * is a wildcard means for all cmds of wdio
+    waitforTimeout: 10000,
+
+    // if browser driver or grid doesn't send response
+    connectionRetryTimeout: 120000,
+
+    - // <number> timeout for step definitions
+        timeout: 60000, -> we can increase it for any of test run in background on running in headless mode 
+        we need to setup higher timeout to complete the step definition in coming session.
+
+    - timeouts: { implicit: 15000, pageLoad: 20000, script: 30000 }, updated inside wdioconf.ts under capabilities array object.
+      // Every script should be competed in 30sec 
+      // Taken from ChromeBrowserCapabilities & Element Capabilities in Data Folder
+
+    - await browser.url("https://www.amazon.com/");
+     console.log(`${JSON.stringify(browser)}`);  // print the data of an array of Objects
+
+     - // <number> timeout for step definitions, the promise has not resolved within this given seconds
+    timeout: 300000, its in cucumberOptions in within that time frame the step gets completed.
+
+
+
+  # Log Level ::
+  - In wdioconf.ts we have log level object i.e, 
+  // Level of logging verbosity: trace | debug | info | warn | error | silent , use error logs will provide the errors only
+  logLevel: "info",
+  
+  # Debugger ::
+  - await browser.debug(); 
+  It will wait there of certain time in logs we can check the data or further we can copy xpath and paste it console to check the
+  how system behaves with this input after that press enter to continue further execution .
+  - Or you can create a script at the sme time using debugger.
+  - We can see furthur at Framework level.
+
+  # REPL :: Way to Control browser through command line 
+  - What is REPL ?
+  Read- evaluate - print loop
+
+  - When do we use it ?
+  You need to spin up a browser instance and start debugging at any level
+
+  - How do i open ?
+  Move to the root where wdio package.json exit
+  npx wdio repl chrome 
+
+  >>> $(`//div[text()="Sauce Labs Backpack"]`).click() , will handle the browser instance and perform action on elements at same time by providing commands of wdio in console
+
+
+# W3C WebDriver Protocol ::
+- https://www.w3.org/TR/webdriver2/ --> A protocol of Webdriver wdio implement this protocol so that any kind of browser
+challange can be handle with this . So we have mny browser Object keys ase we seen under data folder.
+- Go to the capabilities section you can see hover that if not understand.
+- Depending on project need add in capabilities object under wdioconf.ts file.
+- skip the ssl certification 
+- chromium cmd line option :: you can see number of flags to control the chrome :: https://peter.sh/experiments/chromium-command-line-switches/
+
+- It is a trial and error 
+
+
+capabilities: [{
+
+   args :{
+
+    browserame: "chrome",
+    "google.chromeOptions":{
+
+      args: ["--disable-web-security"]
+    }
+   }
+
+}]
+
+
+# git Changes Check ::
+- Click on git icon on right side and see the changes before after on the same file you did Red Flag for removing and green for adding in same file.
+- git checkout master - git commit -m "pushing changes" - git merge -m "comment" local branch | Local to Master Merge locally.
+
+
+
+# Running test case from Package.json File ::
+- npm run TagName which provided under script Tag.
+
+Before 
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "wdio": "wdio run ./wdio.conf.ts"
+  },
+
+ Alteration in Package.json 
+- "test": "npx wdio wdio.conf.ts --cucumberOpts.tags='@demo'"
+   "smoke": "npx wdio wdio.conf.ts --cucumberOpts.tags='@smoke'"
+
+   Now in Command line write >>> npm run smoke, So the tag which is containing either scenario or feature will start running it.
+   Note :: Make the  tags='', empty in cucumberOpts in wdioconf.ts file
+ 
