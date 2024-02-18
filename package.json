@@ -5,8 +5,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "wdio": "wdio run ./wdio.conf.ts"
+    "demo": "export debug=Y && headless=Y && npx wdio wdio.conf.ts --cucumberOpts.tags='@demo'",
+    "sanity": "export DEBUG=N && HEADLESS=N && npx wdio wdio.conf.ts --cucumberOpts.tags='@sanity'",
+    "envTest": "export HEADLESS=N && npx wdio wdio.conf.ts --cucumberOpts.tags='@env'",
+    "Test:envTest": "export debug=Y && headless=Y && npx wdio config/wdio.test.conf.ts --cucumberOpts.tags='@testenv'",
+    "uat:envTest": "export HEADLESS=N && npx wdio config/wdio.uat.conf.ts --cucumberOpts.tags='@testenv'"
+  
+
   },
   "keywords": [
     "wdio",
@@ -24,6 +29,7 @@
     "@wdio/local-runner": "^8.32.0",
     "@wdio/spec-reporter": "^8.31.1",
     "chai": "^5.0.3",
+    "dotenv": "^16.4.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }

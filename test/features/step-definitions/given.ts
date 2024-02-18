@@ -9,7 +9,7 @@ Given(/^Login to inventory web Page$/, async function(){
     await browser.setTimeout({ implicit: 20000, pageLoad: 20000});
     await browser.maximizeWindow();
     await browser.deleteAllCookies();
-
+    
     // Login Details :: 
     let un= await $('#user-name')
     un.setValue("standard_user");

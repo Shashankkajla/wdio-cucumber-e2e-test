@@ -1,6 +1,6 @@
 Feature: My First Feature in WDIO Test
 
-    @demo
+    @demo @sanity @debug
     Scenario Outline: Run First Demo Feature
         Given Google Page is opened
         When Search with <SearchItems>

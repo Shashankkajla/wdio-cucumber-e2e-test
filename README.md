@@ -208,5 +208,185 @@ Before
    "smoke": "npx wdio wdio.conf.ts --cucumberOpts.tags='@smoke'"
 
    Now in Command line write >>> npm run smoke, So the tag which is containing either scenario or feature will start running it.
-   Note :: Make the  tags='', empty in cucumberOpts in wdioconf.ts file
+   Note :: Make the  tags='', empty in cucumberOpts in wdioconf.ts file.
+
+
+# Running Test in Headless Mode :: 
+- I want to run tests in Headless mode , So that i can run tests in background mode and also can run using CI tools incl
+Jenkins, GithUb actions.
+
+Configuration to Run Tests in Headless Mode ::
+
+STEPS ::
+- Add these Flags as chrome Options, in capabilities section in wdio.ts file
+Note :: All these flags need to be add on if you are working on Docker, gitHub Jenkins to run in headless mode
+If you want to run locally in headless just need to add --headless only in wdio.ts under capabilities
+
+1. --headless
+2. --disbale-dev-shm-usage
+3. --no-sandbox
+4. --window-size=1920,1080
+5. --disable-gpu
+
+- Additional Flag
+1. --proxy-server
+2. binary
+3. --auth-server-whitelist="_"
+
+- Make use of process.env obj to set headless flag
+1. Use export for MacOS and set for Windows
+
+- Written in Registor as well
+
+
+ -- > Previous to Run Normal ::
+
+ capabilities: [
+    {
+      browserName: "chrome",
+      browserVersion: "122.0.6261.39",
+
+      timeouts: { implicit: 15000, pageLoad: 20000, script: 30000 },
+               
+      },      
+  ],
+
+  -->  "scripts": {
+    "demo": "export HEADLESS=N && npx wdio wdio.conf.ts --cucumberOpts.tags='@demo'",
+    "sanity": "export HEADLESS=Y && npx wdio wdio.conf.ts --cucumberOpts.tags='@sanity'"
+  },
+
+  ->To run in Headless via package.json 
+
+
+->Add in wdioconf.ts
+let headless = process.env.HEADLESS
+console.log(`${headless}`);
+  capabilities: [
+    {
+      browserName: "chrome",
+      browserVersion: "122.0.6261.39",
+
+      timeouts: { implicit: 15000, pageLoad: 20000, script: 30000 },
+      
+    "goog:chromeOptions":{
+    args: headless.toUpperCase() ==="Y" ? ["--disable-web-security", "--headless", "--disbale-dev-shm-usage", "--no-sandbox", "--window-size=1920,1080"] : []
+          
+      },
+
+
+  # Running in Parallel Mode :: 
+  -------------------------------
+
+  - WDIO runner starts, it looks for the number of feature specific file to run
+  - The run scpe changes only to feature file that matches the tag
+  - Noe : A feature file has to execute for every capability 
+  - Use 'exclude' option to exclude specific feature file from specific capability.
+
+  - wdio.ts capability : Each feature has been asign to each worker., The valid tag of the worker will be executed and remaining will not do aything.
+
+  - Capabilityies in wdio.ts: Need to add other brow
+  - Its outside capability -> maxInstance: 10; --> maximum 10 instances to be run 
+  - Its withing cpability-> maxInstance : 5; --> Suppose you given 10 Feature file to run it will run 5 feature file once that it completes than run 
+  remaining 5.
+
+  - Run in parallel out of 3 workers 2 workers have assigned 
+
+
+# Setted up the .env File ::
+--------------------------------
  
+- I want to store all creds[secrets] in seprate file
+- So that, I can store things securely and don't expose credentials.
+- Search in npm and install same way as we installed chai  -> npm i --save-dev dotenv
+- Go to website , make sure you are on root to install it or it will install it in some other directory.
+- Create file .env file in the root [if not exist already]
+- Install dotenv package from npm 
+- Add these two lines in wdio.conf.ts  
+
+>>import dotenv from "dotenv"
+>> dotenv.config()
+
+Once we are running as we know wdioconf.ts is a file that will load first while runing suite , So that we are importiing the configuration of .env on to the top so once  dotenv.config() runs it will connect with the .env key pairs which are available 
+in the file so that at run time we can use it accordingly .
+
+# 1. WDIO Version 8 changes IMP ::
+1. Usefull file extension when importing project file.
+Optionally enable "typescript.preference.importMpduleSpecifierEncoding": "js", in VSCode setting.json, Click on setting gear icon open from top rectengale file click on it and add it under typescript object after adding it it will automatically import 
+suggestion will give you i.e pageObject folder file or helper file it will give you the suggestion for custom import.
+- using version  "@wdio/cli": "^8.32.0",
+
+2. `browser.config` -> `browser.option` i.e in wdio.conf.ts i.e testid
+When merging env specific conf file , add all the keys to `before`hook to make the key available to `browser.options` object
+
+
+# 2. Manage/ Create and merge d/f environment configuration file ::
+------------------------------------------------------------
+- Lets say write ow you just hardcoded this env url in real time you have multiple environment uat, prod, sit others, So how are we manage those env specific information and how can we run same test in across environment.
+
+- As an Automation Testr I store urls and environment related data in a seperate config file, So that I run test across
+different environment without any changes.
+
+>> Steps ::
+- Create d/f env files (e.g test, uat, prod)
+- Merge with wdio conf file (using Object.assign)
+- Update package.json file with new config path
+- Access the property with browser.config.<key>, update and run test
+
+
+Creation Steps ::
+- Go under the config folder and create a file i.e wdio.test.conf.ts
+- add another one file under same folder wdio.uat.conf.ts or you can add multiple accg to you env's.
+- Now we have to merge these two files with the wdio.conf.ts file in that file config: is key where wdio knows that inside this config which is i need to execute.
+
+>> Merging same example in debug folder added,,,
+- let objA = {
+ a: 1
+
+}
+
+let objB = {
+
+b : 2
+}
+
+// Now how can i merge these two values , So that i can get an obj like a :1 and b: 2 ?
+// use ... spread operator or assign .
+
+objA = Object.assign(objA, objB); // Merging these values to option A i.e Merging objB value to objA.
+
+console.log(objA);
+// op :: a : 1 & b : 2 Here's how we performed merge.
+
+
+>>>>> >>> under config folder >>> 
+
+import {config as baseConfig} from "../wdio.conf" 
+// As we know about config we are making alias as baseConfig coz config is a key which 
+//already present in wdio.conf file from where the execution starts.
+
+export const config= Object.assign(baseConfig,{
+
+// env specific key value pair 
+ environment : "Test",
+ sauseDemoUrl: "https://www.saucedemo.com"
+
+})
+
+// We are assig in same way its in wdioconf.ts , So at run time WDIo understand we have a config file with addiotional two values.
+// Due to some changes this won't work
+
+
+
+# Log Level ::
+------------- 
+let debug = process.env.debug --> the flag need to put same way for headless mode one 
+  logLevel: debug.toUpperCase() ==="Y" ?  'info': 'error',
+
+   >> "demo": "export debug=N && HEADLESS=N && npx wdio wdio.conf.ts --cucumberOpts.tags='@demo'",
+
+
+
+  
+
+

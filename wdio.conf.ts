@@ -1,4 +1,17 @@
 import type { Options } from "@wdio/types";
+
+//.env
+import dotenv from "dotenv";
+dotenv.config();
+
+
+// Headless Mode 
+let headless = process.env.HEADLESS
+console.log(`>> The headless flag : ${headless}`)
+// Logger
+let debug = process.env.DEBUG
+// It loads the .env file and on run time provide the value for the matchd secret.
+
 export const config: Options.Testrunner = {
   //
   // ====================
@@ -11,6 +24,8 @@ export const config: Options.Testrunner = {
     tsNodeOpts: {
       project: "./tsconfig.json",
       transpileOnly: true,
+
+
     },
   },
 
@@ -59,12 +74,39 @@ export const config: Options.Testrunner = {
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
   // https://saucelabs.com/platform/platform-configurator
   //
+  
+  /**
+   * 
+   * Add these Flags as chrome Options, in capabilities section in wdio.ts file
+   * 
+  1. --headless
+  2. --disbale-dev-shm-usage - For unix 
+  3. --no-sandbox - For any other gogle doc
+  4. --window-size=1920,1080
+  5. --disable-gpu
+  
+  - Additional Flag
+  1. --proxy-server=https//domain
+  2. binary
+  3. --auth-server-whitelist="_" : Forcefully invoke the SSO SinglesignOn
+  
+  - Make use of process.env obj to set headless flag
+  1. Use export for MacOS and set for Windows
+
+  */
+
   capabilities: [
     {
       browserName: "chrome",
       browserVersion: "122.0.6261.39",
 
       timeouts: { implicit: 15000, pageLoad: 20000, script: 30000 },
+      
+     "goog:chromeOptions":{
+      args: headless ==="N" ? ["--disable-web-security", "--headless", "--disbale-dev-shm-usage", "--no-sandbox", "--window-size=1920,1080"] : []
+          
+      },
+
       // Every script should be competed in 30sec 
       // Taken from ChromeBrowserCapabilities & Element Capabilities in Data Folder
     },
@@ -77,7 +119,10 @@ export const config: Options.Testrunner = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
-  logLevel: "info",
+  logLevel: debug === "Y" ?  'info': 'error',
+
+
+  // 
   //
   // Set specific log levels per logger
   // loggers:
@@ -162,7 +207,8 @@ export const config: Options.Testrunner = {
     // <boolean> fail if there are any undefined or pending steps
     strict: false,
     // <string> (expression) only execute the features or scenarios with tags matching the expression
-    tags: "@demo2",
+    tags: '',
+    //"@demo2",
     // <number> timeout for step definitions, the promise has not resolved within this given seconds
     timeout: 300000,
     // <boolean> Enable this config to treat undefined definitions as warnings.
@@ -222,8 +268,15 @@ export const config: Options.Testrunner = {
    * @param {Array.<String>} specs        List of spec file paths that are to be run
    * @param {object}         browser      instance of created browser/device session
    */
-  // before: function (capabilities, specs) {
-  // },
+ /* before: function (capabilities, specs) {
+
+    browser.options["environment"]= config.environment
+    browser.options["sauseDemoUrl"]= config.sauseDemoUrl
+    browser.options["TestUn"]= config.TestUn
+    browser.options["TestPw"]= config.TestPw
+
+  },
+  */
   /**
    * Runs before a WebdriverIO command gets executed.
    * @param {string} commandName hook command name
@@ -246,8 +299,18 @@ export const config: Options.Testrunner = {
    * @param {ITestCaseHookParameter} world    world object containing information on pickle and test step
    * @param {object}                 context  Cucumber World object
    */
-  // beforeScenario: function (world, context) {
-  // },
+ /* beforeScenario: function (world, context) {
+
+    let arr = world.pickle.name.split(/:/)
+    //@ts-ignore
+    if(arr.length > 0) browser.options.testid=arr[0]
+    //@ts-ignore
+    if(!browser.options.testid) throw Error(`Error getting testid for current Scenario: ${world.pickle.name}`)
+  },
+
+  */
+
+
   /**
    *
    * Runs before a Cucumber Step.
@@ -255,8 +318,14 @@ export const config: Options.Testrunner = {
    * @param {IPickle}            scenario scenario pickle
    * @param {object}             context  Cucumber World object
    */
-  // beforeStep: function (step, scenario, context) {
-  // },
+  
+  /* beforeStep: function (step, scenario, context) {
+
+     if(browser.options.testid) context.testid = browser.options.testid
+
+  },
+  */
+
   /**
    *
    * Runs after a Cucumber Step.

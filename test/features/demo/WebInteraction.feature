@@ -1,7 +1,7 @@
 Feature: Web Interaction Session.
 
 
-    @demo1
+    @demo @sanity
     Scenario Outline: WebInteraction Test Cases
         Given A web Page is opened <URL>
         When Perform WebInteraction
