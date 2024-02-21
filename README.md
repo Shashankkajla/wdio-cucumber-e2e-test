@@ -387,6 +387,162 @@ let debug = process.env.debug --> the flag need to put same way for headless mod
 
 
 
-  
+  # Advance Cucumber Hooks Integration & Regular Expression ::
+  ----------------------------------------------------------------
+  - https://regexr.com/ : website to validate the regular expression
+  - The dattable must be the last passing argument of a function most of things added in AdvanceCucumber.feature and cucumber .ts
+  stepdefinition.
+  - ${JSON.stringfy(obj)} : provide the objects print the argument of hooks which you are using stored it into debug folder
+  and use it accordingly ex: @AfterStep : takescreenshot.
+
+  - SetUp world obj , A way to exchange data b/w steps ::
+  - Failed Screenshot will show in allure-result folder
+
+
+# SetUpWorld Object ::
+------------------------
+- As an automation testerI want to set a value at one step , So that i can access the same at d/f steps at my feature file.
+
+Steps::
+- create a world.ts file under step-definition folder
+- import setWorld constructor
+- create a customWorld class & set the number of argument to setWorldConstructor i.e that can be accessed by steps for that scenario where it will require in other steps i.e appId, caseId , unique identifier etc.
+
+Note >> :: The values are accessible only per scenario/Iteration and values are reset at every new scenario/ iteration.
+
+- Concept done but its not working see it in AdvanceCucumber.feature
+
+
+# SettingUp TestId Globally ::
+-------------------------------
+- same declared in global object
+- BeforeScenarionworldObject :: 
+
+TestID Objects :: 
+>> gherkinDocument
+>> pickle  -->  "name": "<TestID_1234> : Testing the id", Inside pickle Array we have name object so make the condition
+>> testCaseStartedId
+
+Check BeforeScenarion
+
+Eg: Scenario: <TestID_1234> : Testing the id --> Geiven TestID for Scenarion
+
+
+Scenario Outline: Run First Demo Feature --> given TestId for Scenario Outline
+        Given Google Page is opened
+        When Search with <SearchItems>
+        Then URL should match <ExpectedURL>
+
+        Examples:
+            | TestCaseID  | SearchItems | ExpectedURL           |
+            | Demo_TC_001 | WDIO        | https://webdriver.io/ |
+
+--> Its not working , but check the split funcn in jS :)
+            beforeScenario: function (world, context) {
+
+    //console.log(`World Is >>>>> ${JSON.stringify(world)}`);
+     console.log(`Context Is >>>>> ${JSON.stringify(context)}`);
+   // Extraction the TestID
+     let arr = world.pickle.name.split(/:/) // split if find any colon : in name object and return str[]
+     
+     if(arr.length > 0){
+      context= arr[0]
+     }
+     if(!context)  throw Error(`Err Getting TestID for current Scenario${world.pickle.name}`)
+
+  },
+
+
+# Setting up the Logger so that i can store the logs in o/p for actions and events::
+-------------------------------------------------------------------------------------
+- Not working need to learn in this to setup in npm 
+
+
+# Allure report SetUp ::
+--------------------------
+- As we know allure is already install during Framework setup so inside allure result folder you can see the 
+results in json format 
+
+- Steps : 
+- Go to np website :: 
+- run in cmd sudo npm install -g allure-commandline , use sudo for permission grants level, recommanded to run on root level
+where wido.conf.ts is present.
+- which allure shoul retunr the path where it installed
+- Run Test case 
+- Run allure serve to generate reports.
+
+Tips :: >>
+Set these two Flags to buitify the Allure results in specs object in wdio.conf.ts
+>> disableWebDriverStepsReporting: true,
+>> useCucumberStepReporter: true
+
+- It also takes the fail Screenshots and the Assertion errors if there is in Failure.
+
+>> Note :: Go to npm_modules - @wdio - allure-reports - build - type.d.ts (will see all allure reporter options)
+>> Also, youc can check for any Technologies i.e CLI cmmonds in same way .
+
+- Add the other details after importing allure in wdio.ts in AfterFeature annotation i.e, environment , tags etc.. as per the requirement will check in this furthur..
+
+- allure-results folder should be present to get the result 
+
+- run, allure serve after that to generate the test case result.
+
+
+# Exceptions JS ::
+> Standard JS Exception :: 
+1.Refrence Error : Variable dosent declare above and you are printing the var
+2. Syntax error 
+3.typeError
+
+
+try{
+
+}
+
+catch(err){
+
+ clg(err.name); // provide the refrence error 
+ clg(err.message); // It will print the error message help to debug
+ clg(typeOf err); // object type 
+
+}
+
+---> Control the test Step pass Fail, retry status using catch Block 
+
+try{
+
+
+} catch(err){
+
+  clg(err.message);
+  throw err;  // Will fail the execution when error occured and dosen't handled by catch
+
+}
+
+
+try{
+
+}
+catch{
+  logger.error(err) ; willl not sto execution it will capture the log and proceed
+
+}
+
+try{
+
+  catch(){
+    // retry 
+  }
+}
+
+# PageObject Model ::
+----------------------
+> PDCA : Plan Do Act Check : Alwaz write the cahi assertions to find out the bugs..
+
+
+
+
+
+
 
 

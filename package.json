@@ -10,8 +10,6 @@
     "envTest": "export HEADLESS=N && npx wdio wdio.conf.ts --cucumberOpts.tags='@env'",
     "Test:envTest": "export debug=Y && headless=Y && npx wdio config/wdio.test.conf.ts --cucumberOpts.tags='@testenv'",
     "uat:envTest": "export HEADLESS=N && npx wdio config/wdio.uat.conf.ts --cucumberOpts.tags='@testenv'"
-  
-
   },
   "keywords": [
     "wdio",
@@ -31,6 +29,7 @@
     "chai": "^5.0.3",
     "dotenv": "^16.4.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "winston": "^3.11.0"
   }
 }

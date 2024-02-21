@@ -47,7 +47,11 @@ export const config: Options.Testrunner = {
   specs: [
     // ToDo: define location for spec files here
     `./test/features/**/*.feature`,
+
   ],
+
+
+
   // Patterns to exclude.
   exclude: [
     // 'path/to/excluded/files'
@@ -121,6 +125,8 @@ export const config: Options.Testrunner = {
   // Level of logging verbosity: trace | debug | info | warn | error | silent
   logLevel: debug === "Y" ?  'info': 'error',
 
+  
+
 
   // 
   //
@@ -185,12 +191,24 @@ export const config: Options.Testrunner = {
   // Test reporter for stdout.
   // The only one supported by default is 'dot'
   // see also: https://webdriver.io/docs/dot-reporter
-  reporters: ["spec", ["allure", { outputDir: "allure-results" }]],
+  reporters: ["spec", 
+  [
+    "allure", { 
+    outputDir: "allure-results",
+    disableWebDriverStepsReporting: true,
+    useCucumberStepReporter: true
+
+  }
+
+  ]
+
+  ],
 
   // If you are using Cucumber you need to specify the location of your step definitions.
   cucumberOpts: {
     // <string[]> (file/dir) require files before executing features
     require: ["./test/features/step-definitions/*.ts"],
+
     // test/features/step-definitions/demo.ts
     // <boolean> show full backtrace for errors
     backtrace: false,
@@ -207,7 +225,7 @@ export const config: Options.Testrunner = {
     // <boolean> fail if there are any undefined or pending steps
     strict: false,
     // <string> (expression) only execute the features or scenarios with tags matching the expression
-    tags: '',
+    tags: '@demo',
     //"@demo2",
     // <number> timeout for step definitions, the promise has not resolved within this given seconds
     timeout: 300000,
@@ -299,16 +317,19 @@ export const config: Options.Testrunner = {
    * @param {ITestCaseHookParameter} world    world object containing information on pickle and test step
    * @param {object}                 context  Cucumber World object
    */
- /* beforeScenario: function (world, context) {
+   //beforeScenario: function (world, context) {
 
-    let arr = world.pickle.name.split(/:/)
-    //@ts-ignore
-    if(arr.length > 0) browser.options.testid=arr[0]
-    //@ts-ignore
-    if(!browser.options.testid) throw Error(`Error getting testid for current Scenario: ${world.pickle.name}`)
-  },
+    //console.log(`World Is >>>>> ${JSON.stringify(world)}`);
+     //console.log(`Context Is >>>>> ${JSON.stringify(context)}`);
+   // Extraction the TestID
+   //  let arr = world.pickle.name.split(/:/) // split if find any colon : in name object and return str[]
+  //   
+    /// if(arr.length > 0){
+    //  context= arr[0]
+  //   }
+    // if(!context)  throw Error(`Err Getting TestID for current Scenario${world.pickle.name}`)
 
-  */
+  //},
 
 
   /**
@@ -319,12 +340,12 @@ export const config: Options.Testrunner = {
    * @param {object}             context  Cucumber World object
    */
   
-  /* beforeStep: function (step, scenario, context) {
+   //beforeStep: function (step, scenario, context) {
 
-     if(browser.options.testid) context.testid = browser.options.testid
+    // Here context is available so i can access it the testId as well instead of creating hooks.ts
 
-  },
-  */
+  //},
+  
 
   /**
    *
@@ -337,8 +358,27 @@ export const config: Options.Testrunner = {
    * @param {number}             result.duration  duration of scenario in milliseconds
    * @param {object}             context          Cucumber World object
    */
-  // afterStep: function (step, scenario, result, context) {
-  // },
+   afterStep: async function (step, scenario, result, context) {
+
+     // alwz convert the function to async 
+    // To understand these data type just print it, go with JSON.stringify
+
+   // console.log(`steps >> ${JSON.stringify(step)}`); // provide the all details
+    //console.log(`scenario >> ${JSON.stringify(scenario)}`);
+    //console.log(`result >> ${JSON.stringify(result)}`);
+    //console.log(`context >> ${JSON.stringify(context)}`);
+
+     // TakesScreenshot
+      // result is an object and .passed is a key so called it 
+     if(!result.passed){ 
+     
+      await browser.takeScreenshot();
+      // see screenshot in allure-result
+
+     }
+
+
+   },
   /**
    *
    * Runs after a Cucumber Scenario.
